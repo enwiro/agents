@@ -1,0 +1,92 @@
+---
+description: Apply DDD agent harness rules when working in this repository. Always active for all code and architecture work.
+alwaysApply: true
+---
+
+# DDD Agent Harness — Cursor
+
+This file activates the DDD multi-agent harness for Cursor. It is placed (or symlinked) at the repository root and applies globally to all work in this repo.
+
+---
+
+## Default Entrypoint: Architect
+
+For any business gesture or feature, start with the Architect agent. Load the Architect role before proceeding:
+
+**Role**: `.ai/agents-core/roles/architect.md`
+
+The Architect runs the pipeline in `.ai/agents-core/workflow.md`:
+plan (G0) → PO behaviors (G1) → DEV-FS → check (G2) → REVIEW → verdict (G3).
+
+To invoke a specific role directly (for targeted audits), load the corresponding role file before starting work.
+
+---
+
+## Agent Roles
+
+| Agent | Role file | Output template | Direct invocation |
+|-------|-----------|----------------|-------------------|
+| Architect | `.ai/agents-core/roles/architect.md` | — | Default entrypoint |
+| PO | `.ai/agents-core/roles/po.md` | `.ai/agents-core/templates/po-output.md` | Domain discovery |
+| DEV-FS | `.ai/agents-core/roles/dev-fs.md` | `.ai/agents-core/templates/dev-fs-output.md` | Implementation |
+| REVIEW | `.ai/agents-core/roles/review.md` | `.ai/agents-core/templates/review-output.md` | Coverage audit |
+
+---
+
+## Mandatory Policies
+
+Always load and apply these policies:
+
+- `.ai/agents-core/policies/ddd.md` — DDD rules, Ubiquitous Language, building blocks
+- `.ai/agents-core/policies/architecture.md` — Hexagonal + Screaming Architecture
+- `.ai/agents-core/policies/testing.md` — Behavior-first testing
+- `.ai/agents-core/policies/commits-and-comments.md` — Commits and code comments
+
+---
+
+## Context Loading Order
+
+Load context in this order (later entries override earlier ones):
+
+1. `.ai/agents-core/policies/` — shared DDD and architecture rules
+2. `.ai/agents-core/workflow.md` — orchestration protocol and gates
+3. `.ai/local/` — local repo overrides (bounded context, UL, thresholds, constraints)
+
+**Local overrides always win.**
+
+---
+
+## Workflow Summary
+
+```
+G0 plan → G1 behaviors → DEV-FS → G2 check → REVIEW → G3 verdict
+```
+
+- The human decides at G0, G1 and G3. The rest runs without a stop.
+- Parallel work only for independent gestures (no shared aggregate).
+- The Architect has final authority and asks the human only for blocking doubts after G1.
+- DEV-FS makes one commit per gesture (`feat(<ticket>): <behavior>`), never pushes.
+- DDD book: use the `ddd` MCP server if available, else `einvoicing-documentation/agents/mcp/ddd/sections/`.
+
+---
+
+## Local Overrides
+
+If `.ai/local/` exists in this repo, apply its content with higher priority than shared rules.
+
+Expected files:
+
+| File | Overrides |
+|------|----------|
+| `.ai/local/context.md` | Bounded context definition, tech stack |
+| `.ai/local/ubiquitous-language.md` | Repo-specific domain glossary |
+| `.ai/local/coverage-thresholds.md` | Line coverage targets |
+| `.ai/local/constraints.md` | Additional architectural constraints |
+
+---
+
+## Code and Language Rules
+
+- All code, tests, documentation, and agent outputs must be in **English**.
+- All domain terms in code must use the Ubiquitous Language verbatim (no translation to technical synonyms).
+- Conversational exchanges with the user may remain in French.
